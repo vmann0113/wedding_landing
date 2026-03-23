@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>2026 부산웨딩박람회 | 관리자 대시보드</title>
+    <style>
+        /* 기본 레이아웃 중앙 정렬 설정 */
+        body { font-family: 'Pretendard', sans-serif; background: #f4f7f6; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; color: #333; }
+        
+        /* 로그인 화면 */
+        #login-section { background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 380px; text-align: center; margin-top: 15vh; }
+        #login-section h2 { margin-bottom: 25px; font-size: 24px; color: #1a1a1a; }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group label { display: block; font-size: 13px; color: #666; margin-bottom: 5px; font-weight: 600; }
+        .input-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; outline: none; }
+        .btn-login { width: 100%; padding: 14px; background: #1a1a1a; color: #fff; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; margin-top: 10px; }
+        
+        /* 관리자 대시보드 (중앙 정렬 최적화) */
+        #admin-section { display: none; width: 95%; max-width: 1100px; padding: 50px 0; margin: 0 auto; }
+        .admin-card { background: #fff; padding: 35px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #f4f4f4; padding-bottom: 25px; }
+        .header h2 { margin: 0; font-size: 22px; }
+
+        /* 검색 바 스타일 */
+        .search-container { margin-bottom: 25px; display: flex; gap: 10px; }
+        .search-input { flex: 1; padding: 12px 20px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; outline: none; transition: 0.3s; }
+        .search-input:focus { border-color: #1a1a1a; box-shadow: 0 0 8px rgba(0,0,0,0.05); }
+
+        /* 버튼 스타일 */
+        .btn-excel { background: #27ae60; color: #fff; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: 700; transition: 0.3s; }
+        .btn-excel:hover { background: #219150; }
+        .btn-logout { background: #e74c3c; color: #fff; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: 700; margin-left: 8px; transition: 0.3s; }
+        .btn-logout:hover { background: #c0392b; }
+        
+        /* 테이블 스타일 */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { background: #f9fafb; padding: 18px 15px; text-align: center; border-bottom: 2px solid #eee; font-size: 14px; color: #666; }
+        td { padding: 18px 15px; border-bottom: 1px solid #eee; font-size: 15px; text-align: center; }
+        .phone-link { color: #007bff; text-decoration: none; font-weight: 600; }
+        tr:hover { background: #fafafa; }
+
+        /* 상태 표시 */
+        #loading { text-align: center; padding: 50px; color: #999; }
+        #no-result { display: none; text-align: center; padding: 50px; color: #999; font-size: 15px; }
+    </style>
+</head>
+<body>
+
+    <div id="login-section">
+        <h2>관리자 로그인</h2>
+        <div class="input-group">
+            <label>아이디</label>
+            <input type="text" id="admin-id" placeholder="ID를 입력하세요">
+        </div>
+        <div class="input-group">
+            <label>비밀번호</label>
+            <input type="password" id="admin-pw" placeholder="Password를 입력하세요">
+        </div>
+        <button class="btn-login" onclick="handleLogin()">로그인</button>
+    </div>
+
+    <div id="admin-section">
+        <div class="admin-card">
+            <div class="header">
+                <h2>📊 사전예약 신청자 명단</h2>
+                <div>
+                    <button class="btn-excel" onclick="exportToExcel()">엑셀 다운로드</button>
+                    <button class="btn-logout" onclick="handleLogout()">로그아웃</button>
+                </div>
+            </div>
+
+            <div class="search-container">
+                <input type="text" id="search-input" class="search-input" onkeyup="filterLeads()" placeholder="이름 또는 연락처로 검색하세요...">
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>신청 일시</th>
+                        <th>성함</th>
+                        <th>연락처</th>
+                        <th>방문 희망일</th>
+                    </tr>
+                </thead>
+                <tbody id="data-list"></tbody>
+            </table>
+            
+            <div id="loading">데이터를 불러오는 중...</div>
+            <div id="no-result">검색 결과가 없습니다.</div>
+        </div>
+    </div>
+
+<script>
+    // ★ 관리자 정보 및 구글 API 설정
+    const ADMIN_CREDENTIALS = { id: "admin", pw: "1234" }; 
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbz2khnzXb_AEKdnQm6OBsUEHistGny6FnFaTlRiAaUp62iR5yPbIqjzg8ze-_UIVZGV/exec"; 
+
+    let allLeads = []; // 전체 데이터를 담을 배열
+
+    // 로그인 처리
+    function handleLogin() {
+        const idInput = document.getElementById('admin-id').value;
+        const pwInput = document.getElementById('admin-pw').value;
+
+        if (idInput === ADMIN_CREDENTIALS.id && pwInput === ADMIN_CREDENTIALS.pw) {
+            sessionStorage.setItem("isLoggedIn", "true");
+            showAdminPage();
+        } else {
+            alert("아이디 또는 비밀번호가 틀렸습니다.");
+        }
+    }
+
+    // 로그아웃 처리
+    function handleLogout() {
+        sessionStorage.removeItem("isLoggedIn");
+        location.reload();
+    }
+
+    // 화면 전환 로직
+    function showAdminPage() {
+        document.getElementById('login-section').style.display = 'none';
+        document.getElementById('admin-section').style.display = 'block';
+        renderLeads();
+    }
+
+    // 명단 가져오기 및 렌더링
+    function renderLeads() {
+        const tbody = document.getElementById('data-list');
+        const loading = document.getElementById('loading');
+        
+        fetch(GAS_URL)
+        .then(res => res.json())
+        .then(data => {
+            loading.style.display = 'none';
+            // 데이터를 가공하여 최신순으로 정렬
+            allLeads = data.reverse().map(row => ({
+                time: new Date(row[0]).toLocaleString('ko-KR'),
+                name: row[1],
+                phone: row[2],
+                date: row[3]
+            }));
+            
+            displayData(allLeads);
+        })
+        .catch(err => {
+            loading.innerText = "데이터를 불러오지 못했습니다. URL을 확인해주세요.";
+            console.error(err);
+        });
+    }
+
+    // 데이터를 화면에 그리는 공통 함수
+    function displayData(dataArray) {
+        const tbody = document.getElementById('data-list');
+        const noResult = document.getElementById('no-result');
+        
+        if (dataArray.length === 0) {
+            tbody.innerHTML = "";
+            noResult.style.display = 'block';
+        } else {
+            noResult.style.display = 'none';
+            tbody.innerHTML = dataArray.map(l => `
+                <tr>
+                    <td style="color:#999; font-size:13px;">${l.time}</td>
+                    <td style="font-weight:700;">${l.name}</td>
+                    <td><a href="tel:${l.phone}" class="phone-link">${l.phone}</a></td>
+                    <td><span style="background:#f0f0f0; padding:5px 10px; border-radius:4px; font-size:13px; color:#555;">${l.date}</span></td>
+                </tr>
+            `).join('');
+        }
+    }
+
+    // 실시간 검색(필터링) 기능
+    function filterLeads() {
+        const query = document.getElementById('search-input').value.toLowerCase();
+        
+        // 이름이나 연락처에 검색어가 포함된 데이터만 추출
+        const filtered = allLeads.filter(lead => 
+            lead.name.toLowerCase().includes(query) || 
+            lead.phone.replace(/-/g, "").includes(query.replace(/-/g, ""))
+        );
+        
+        displayData(filtered);
+    }
+
+    // 엑셀 다운로드 (현재 화면에 보이는 명단 기준)
+    function exportToExcel() {
+        const query = document.getElementById('search-input').value.toLowerCase();
+        const dataToExport = query ? 
+            allLeads.filter(lead => lead.name.toLowerCase().includes(query) || lead.phone.includes(query)) : 
+            allLeads;
+
+        if(dataToExport.length === 0) {
+            alert("다운로드할 명단이 없습니다.");
+            return;
+        }
+
+        let csv = "\uFEFF신청시간,이름,연락처,방문예정일\n";
+        dataToExport.forEach(l => { 
+            csv += `${l.time},${l.name},${l.phone},${l.date}\n`; 
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        const fileName = query ? `2026_부산박람회_검색결과_${query}.csv` : "2026_부산박람회_전체명단.csv";
+        link.setAttribute("download", fileName);
+        link.click();
+    }
+
+    // 엔터키 로그인 지원
+    document.getElementById('admin-pw').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') handleLogin();
+    });
+
+    // 페이지 진입 시 세션 체크
+    window.onload = function() {
+        if (sessionStorage.getItem("isLoggedIn") === "true") {
+            showAdminPage();
+        }
+    };
+</script>
+
+</body>
+</html>

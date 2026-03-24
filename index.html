@@ -104,6 +104,21 @@
         footer { padding: 80px 0 160px; text-align: center; font-size: 13px; color: #bbb; }
 
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* 신청 완료 상태 스타일 */
+        .apply-container { position: relative; } 
+        .form-disabled { opacity: 0.3; pointer-events: none; user-select: none; }
+        #completion-msg {
+            position: absolute; top: 55%; left: 50%;
+            transform: translate(-50%, -50%) rotate(-10deg);
+            display: none; z-index: 100;
+        }
+        .completion-text {
+            color: #ff6b00; font-size: 50px; font-weight: 900;
+            border: 6px solid #ff6b00; padding: 15px 30px;
+            background: rgba(255, 255, 255, 0.9); white-space: nowrap;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
     </style>
 </head>
 <body>
@@ -163,6 +178,7 @@
         <section class="apply-section" id="apply">
             <div class="apply-container">
                 <h3 class="serif">사전예약 신청</h3>
+                <div id="completion-msg"><div class="completion-text">신청 완료</div></div>
                 <form id="applyForm">
                     <div class="form-group" id="prize-wrap" style="display:none; margin-bottom:20px;">
                         <label style="color:#e74c3c;">🎊 당첨된 혜택</label>
@@ -261,8 +277,19 @@ function renderPartners() {
 
                 fetch(GAS_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(formData) })
                 .then(() => {
-                    alert('신청이 완료되었습니다!');
-                    location.reload(); 
+                    // 1. 알림창
+                    alert('신청이 완료되었습니다! 박람회 정보를 자유롭게 둘러보세요.');
+
+                    // 2. 폼 흐리게 + 완료 도장 쾅!
+                    const form = document.getElementById('applyForm');
+                    form.classList.add('form-disabled');
+                    document.getElementById('completion-msg').style.display = 'block';
+
+                    // 3. 버튼 글자 변경
+                    submitBtn.innerText = "신청 접수 완료";
+                    
+                    // 리로드를 하지 않아야 사이트 구경이 가능합니다.
+                    console.log("리로드 없이 화면 유지");
                 }).catch(() => {
                     alert('오류 발생');
                     submitBtn.disabled = false;

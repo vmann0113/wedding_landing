@@ -76,13 +76,13 @@
 
             <table>
                 <thead>
-                    <tr>
-                        <th>신청 일시</th>
-                        <th>성함</th>
-                        <th>연락처</th>
-                        <th>방문 희망일</th>
-                    </tr>
-                </thead>
+    <tr>
+        <th>신청 일시</th>
+        <th>성함</th>
+        <th>연락처</th>
+        <th>방문 희망일</th>
+        <th>🎁 당첨 상품</th> </tr>
+</thead>
                 <tbody id="data-list"></tbody>
             </table>
             
@@ -126,62 +126,66 @@
 
     // 명단 가져오기 및 렌더링
     function renderLeads() {
-        const tbody = document.getElementById('data-list');
-        const loading = document.getElementById('loading');
+    const tbody = document.getElementById('data-list');
+    const loading = document.getElementById('loading');
+    
+    fetch(GAS_URL)
+    .then(res => res.json())
+    .then(data => {
+        loading.style.display = 'none';
         
-        fetch(GAS_URL)
-        .then(res => res.json())
-        .then(data => {
-            loading.style.display = 'none';
-            // 데이터를 가공하여 최신순으로 정렬
-            allLeads = data.reverse().map(row => ({
-                time: new Date(row[0]).toLocaleString('ko-KR'),
-                name: row[1],
-                phone: row[2],
-                date: row[3]
-            }));
-            
-            displayData(allLeads);
-        })
-        .catch(err => {
-            loading.innerText = "데이터를 불러오지 못했습니다. URL을 확인해주세요.";
-            console.error(err);
-        });
-    }
+        // [수정된 로직] 데이터가 5줄 미만인 과거 데이터도 에러 없이 처리
+        allLeads = data.reverse().map(row => ({
+            time: new Date(row[0]).toLocaleString('ko-KR'),
+            name: row[1] || "이름없음",
+            phone: row[2] || "연락처없음",
+            date: row[3] || "-",
+            // row.length를 체크해서 5번째 칸이 있을 때만 가져오고, 없으면 "-" 표시
+            prize: (row.length > 4) ? row[4] : "미참여" 
+        }));
+        
+        displayData(allLeads);
+    })
+    .catch(err => {
+        loading.innerText = "데이터 로딩 실패. 콘솔을 확인하세요.";
+        console.error("에러 상세:", err);
+    });
+}
 
     // 데이터를 화면에 그리는 공통 함수
     function displayData(dataArray) {
-        const tbody = document.getElementById('data-list');
-        const noResult = document.getElementById('no-result');
-        
-        if (dataArray.length === 0) {
-            tbody.innerHTML = "";
-            noResult.style.display = 'block';
-        } else {
-            noResult.style.display = 'none';
-            tbody.innerHTML = dataArray.map(l => `
-                <tr>
-                    <td style="color:#999; font-size:13px;">${l.time}</td>
-                    <td style="font-weight:700;">${l.name}</td>
-                    <td><a href="tel:${l.phone}" class="phone-link">${l.phone}</a></td>
-                    <td><span style="background:#f0f0f0; padding:5px 10px; border-radius:4px; font-size:13px; color:#555;">${l.date}</span></td>
-                </tr>
-            `).join('');
-        }
+    const tbody = document.getElementById('data-list');
+    const noResult = document.getElementById('no-result');
+    
+    if (dataArray.length === 0) {
+        tbody.innerHTML = "";
+        noResult.style.display = 'block';
+    } else {
+        noResult.style.display = 'none';
+        tbody.innerHTML = dataArray.map(l => `
+            <tr>
+                <td style="color:#999; font-size:13px;">${l.time}</td>
+                <td style="font-weight:700;">${l.name}</td>
+                <td><a href="tel:${l.phone}" class="phone-link">${l.phone}</a></td>
+                <td><span style="background:#f0f0f0; padding:5px 10px; border-radius:4px; font-size:13px; color:#555;">${l.date}</span></td>
+                <td><b style="color:#e67e22;">${l.prize}</b></td> 
+            </tr>
+        `).join('');
     }
+}
 
     // 실시간 검색(필터링) 기능
     function filterLeads() {
-        const query = document.getElementById('search-input').value.toLowerCase();
-        
-        // 이름이나 연락처에 검색어가 포함된 데이터만 추출
-        const filtered = allLeads.filter(lead => 
-            lead.name.toLowerCase().includes(query) || 
-            lead.phone.replace(/-/g, "").includes(query.replace(/-/g, ""))
-        );
-        
-        displayData(filtered);
-    }
+    const query = document.getElementById('search-input').value.toLowerCase();
+    
+    const filtered = allLeads.filter(lead => 
+        lead.name.toLowerCase().includes(query) || 
+        lead.phone.includes(query) ||
+        lead.prize.toLowerCase().includes(query) // [추가] 당첨상품으로도 검색 가능!
+    );
+    
+    displayData(filtered);
+}
 
     // 엑셀 다운로드 (현재 화면에 보이는 명단 기준)
     function exportToExcel() {
@@ -195,10 +199,12 @@
             return;
         }
 
-        let csv = "\uFEFF신청시간,이름,연락처,방문예정일\n";
-        dataToExport.forEach(l => { 
-            csv += `${l.time},${l.name},${l.phone},${l.date}\n`; 
-        });
+        // 헤더에 당첨상품 추가
+    let csv = "\uFEFF신청시간,이름,연락처,방문예정일,당첨상품\n";
+    dataToExport.forEach(l => { 
+        // 데이터 행에 prize 추가
+        csv += `${l.time},${l.name},${l.phone},${l.date},${l.prize}\n`; 
+    });
 
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement("a");

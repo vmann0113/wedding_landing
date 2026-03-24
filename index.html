@@ -7,6 +7,9 @@
     
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;500;700&display=swap">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+    
+    <link rel="stylesheet" href="roulette.css">
+    <link rel="stylesheet" href="partners.css">
 
     <style>
         :root {
@@ -23,7 +26,7 @@
         h1, h2, h3, .serif { font-family: 'Noto Serif KR', serif; }
         .container { width: 95%; max-width: 1200px; margin: 0 auto; }
 
-        /* [수정] 카운트다운 바 - 깜빡임 방지 및 텍스트 강조 */
+        /* 카운트다운 바 */
         .countdown-bar {
             background: var(--timer-bg); color: var(--white); text-align: center;
             padding: 22px 0; position: sticky; top: 0; z-index: 1000;
@@ -53,7 +56,7 @@
         section h3 { font-size: 38px; text-align: center; margin-bottom: 80px; font-weight: 500; color: #111; }
         section h3 span { display: block; font-size: 14px; color: var(--point); letter-spacing: 5px; margin-bottom: 15px; font-family: 'Pretendard'; font-weight: 700; text-transform: uppercase; }
 
-        /* [디자인 복구] 사전예약자 5대 특전 섹션 */
+        /* 특전 섹션 */
         .benefit-section { background: #faf8f5; }
         .benefit-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
         .benefit-card { 
@@ -63,76 +66,63 @@
         }
         .benefit-card:hover { transform: translateY(-8px); border-color: var(--point); }
         .benefit-card .icon { font-size: 50px; margin-bottom: 25px; display: block; }
-        .benefit-card .b-title { font-size: 20px; font-weight: 700; color: #111; margin-bottom: 12px; }
-        .benefit-card .b-desc { font-size: 15px; color: #777; line-height: 1.6; margin-bottom: 20px; }
-        .benefit-card .b-tag { display: inline-block; font-size: 12px; color: var(--point); font-weight: 700; border: 1.5px solid var(--point); padding: 4px 15px; border-radius: 30px; align-self: center; }
 
-        /* 업체 라인업 상세 카드 */
+        /* 파트너 섹션 */
         .partner-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
-        .partner-item { background: #fff; border: 1px solid #f0f0f0; border-radius: 8px; overflow: hidden; transition: 0.4s; }
+        .partner-item { background: #fff; border: 1px solid #f0f0f0; border-radius: 8px; overflow: hidden; }
         .partner-img-box { height: 350px; overflow: hidden; }
-        .partner-item img { width: 100%; height: 100%; object-fit: cover; transition: 0.8s; }
-        .partner-item:hover img { transform: scale(1.05); }
+        .partner-item img { width: 100%; height: 100%; object-fit: cover; }
         .partner-info { padding: 30px; }
-        .partner-info .cate { font-size: 13px; color: var(--point); font-weight: 800; letter-spacing: 2px; margin-bottom: 10px; display: block; }
-        .partner-info .name { font-size: 22px; font-weight: 700; margin-bottom: 12px; font-family: 'Noto Serif KR'; }
-        .partner-info .desc { font-size: 15px; color: #777; line-height: 1.6; margin-bottom: 20px; }
-        .partner-info .tag-box { display: flex; flex-wrap: wrap; gap: 8px; }
-        .partner-info .tag { font-size: 12px; background: #f4f4f4; color: #999; padding: 5px 12px; border-radius: 4px; }
 
-        /* Coming Soon 빈칸 */
-        .coming-soon { 
-            border: 2px dashed #ddd !important; background: #fafafa !important; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 500px;
-        }
-
-        /* 신청 폼 섹션 - 가로 고정 & 배경 반응형 */
+        /* 신청 폼 섹션 */
         .apply-section { background: var(--bg-light); padding: 120px 0; display: flex; justify-content: center; }
         .apply-container { 
             width: 95%; max-width: 600px; background: #fff; padding: 70px 50px; 
             box-shadow: 0 40px 80px rgba(0,0,0,0.08); border-radius: 12px;
         }
         .apply-container h3 { text-align: center; font-size: 32px; margin-bottom: 50px; }
-
         .form-group { margin-bottom: 30px; }
         .form-group label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 12px; }
         .form-group input, .form-group select { 
             width: 100%; padding: 18px; border: 1px solid #eee; border-radius: 8px; font-size: 16px; outline: none; background: #f9f9f9;
         }
 
-        /* CTA 버튼 정렬 및 텍스트 겹침 해결 */
         .btn-submit { 
             width: 100%; min-height: 70px; background: var(--black); color: #fff; border: none;
             font-size: 20px; font-weight: 800; cursor: pointer; border-radius: 8px; margin-top: 20px;
-            display: flex; align-items: center; justify-content: center; letter-spacing: 2px; transition: 0.3s;
+            display: flex; align-items: center; justify-content: center; letter-spacing: 2px;
         }
-        .btn-submit:hover { background: #333; transform: scale(1.02); }
 
-        /* 하단 고정 바 */
+        /* 고정 바 */
         .floating-bar {
             position: fixed; bottom: 0; left: 0; width: 100%; background: #fff;
             padding: 15px 25px; display: flex; justify-content: center; align-items: center;
             box-shadow: 0 -10px 30px rgba(0,0,0,0.1); z-index: 2000;
         }
-        .floating-content { width: 100%; max-width: 1200px; display: flex; justify-content: space-between; align-items: center; }
-        .btn-float { background: var(--point); color: #fff; padding: 16px 45px; font-weight: 800; text-decoration: none; border-radius: 6px; font-size: 16px; }
+        .btn-float { background: var(--point); color: #fff; padding: 16px 45px; font-weight: 800; text-decoration: none; border-radius: 6px; }
 
         footer { padding: 80px 0 160px; text-align: center; font-size: 13px; color: #bbb; }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @media (max-width: 768px) {
-            #timer { font-size: 28px; }
-            .apply-container { padding: 50px 25px; }
-            .floating-text { display: none; }
-            .btn-float { width: 100%; text-align: center; }
-        }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
+
+    <div id="roulette-overlay">
+    <div class="roulette-modal">
+        
+        <div class="roulette-title-box">
+            <img src="roulette_title.png" alt="타이틀">
+        </div>
+
+        <div class="canvas-container">
+            <img src="roulette_pointer.png" class="roulette-pointer" alt="포인터">
+            
+            <img src="roulette_disk.png" id="roulette-img" onclick="spinRoulette()" alt="원판">
+        </div>
+
+    </div>
+</div>
 
     <div class="countdown-bar">
         <span class="countdown-label">✨ 부산 벡스코 박람회 무료신청 마감 임박! ✨</span>
@@ -140,9 +130,7 @@
     </div>
 
     <header>
-        <div class="container">
-            <h1>BUSAN PREMIUM</h1>
-        </div>
+        <div class="container"><h1>BUSAN PREMIUM</h1></div>
     </header>
 
     <main>
@@ -158,53 +146,31 @@
             <div class="container">
                 <h3><span>Exclusive Benefits</span>오직 사전예약자만을 위한 5대 특전</h3>
                 <div class="benefit-grid">
-                    <div class="benefit-card">
-                        <span class="icon">🎟️</span>
-                        <p class="b-title">무료입장권 전원</p>
-                        <p class="b-desc">사전 신청 시 입장료 1만원 면제 및 즉시 발송</p>
-                        <span class="b-tag">100% 증정</span>
-                    </div>
-                    <div class="benefit-card">
-                        <span class="icon">🎁</span>
-                        <p class="b-title">방문 사은품</p>
-                        <p class="b-desc">웨딩 다이어리 및 에코백 패키지 증정</p>
-                        <span class="b-tag">선착순 500명</span>
-                    </div>
-                    <div class="benefit-card">
-                        <span class="icon">💍</span>
-                        <p class="b-title">스드메 할인</p>
-                        <p class="b-desc">인기 정찰제 브랜드 최대 100만원 지원</p>
-                        <span class="b-tag">현장 계약 특전</span>
-                    </div>
-                    <div class="benefit-card">
-                        <span class="icon">📺</span>
-                        <p class="b-title">혼수 가전 지원</p>
-                        <p class="b-desc">삼성/LG 가전 구매 시 추가 포인트 적립</p>
-                        <span class="b-tag">가전 브랜드 연계</span>
-                    </div>
-                    <div class="benefit-card">
-                        <span class="icon">🏨</span>
-                        <p class="b-title">웨딩홀 무료시식</p>
-                        <p class="b-desc">부산 주요 인기 홀 시식권 및 대관료 할인</p>
-                        <span class="b-tag">Hall 특별지원</span>
-                    </div>
+                    <div class="benefit-card"><span class="icon">🎟️</span><p class="b-title">무료입장권 전원</p><p class="b-desc">입장료 면제 혜택</p></div>
+                    <div class="benefit-card"><span class="icon">🎁</span><p class="b-title">방문 사은품</p><p class="b-desc">다이어리 증정</p></div>
+                    <div class="benefit-card"><span class="icon">💍</span><p class="b-title">스드메 할인</p><p class="b-desc">최대 100만원 지원</p></div>
+                    <div class="benefit-card"><span class="icon">📺</span><p class="b-title">혼수 가전 지원</p><p class="b-desc">삼성/LG 추가 적립</p></div>
+                    <div class="benefit-card"><span class="icon">🏨</span><p class="b-title">웨딩홀 무료시식</p><p class="b-desc">대관료 특별 할인</p></div>
                 </div>
             </div>
         </section>
 
         <section class="container">
             <h3><span>Wedding Line-up</span>참가 확정 브랜드</h3>
-            <div class="partner-grid" id="partner-list">
-                </div>
+            <div class="partner-grid" id="partner-list"></div>
         </section>
 
         <section class="apply-section" id="apply">
             <div class="apply-container">
                 <h3 class="serif">사전예약 신청</h3>
                 <form id="applyForm">
-                    <div class="form-group"><label>성함</label><input type="text" placeholder="성함을 입력하세요" required></div>
-                    <div class="form-group"><label>연락처</label><input type="tel" name="phone" oninput="autoHyphen(this)" maxlength="13" placeholder="010-0000-0000" required></div>
-                    <div class="form-group"><label>방문 희망 일자</label><select><option>12월 12일(토)</option><option>12월 13일(일)</option></select></div>
+                    <div class="form-group" id="prize-wrap" style="display:none; margin-bottom:20px;">
+                        <label style="color:#e74c3c;">🎊 당첨된 혜택</label>
+                        <input type="text" id="wonPrizeField" readonly style="border:2px solid #e74c3c; color:#e74c3c; font-weight:800; padding:15px; width:100%; border-radius:8px;">
+                    </div>
+                    <div class="form-group"><label>성함</label><input type="text" id="user-name" placeholder="성함을 입력하세요" required></div>
+                    <div class="form-group"><label>연락처</label><input type="tel" id="user-phone" oninput="autoHyphen(this)" maxlength="13" placeholder="010-0000-0000" required></div>
+                    <div class="form-group"><label>방문 희망 일자</label><select id="user-date"><option>12월 12일(토)</option><option>12월 13일(일)</option></select></div>
                     <button type="submit" class="btn-submit">무료 입장권 신청 완료</button>
                 </form>
             </div>
@@ -213,167 +179,146 @@
 
     <div class="floating-bar">
         <div class="floating-content">
-            <div class="floating-text"><strong>2026 부산 프리미엄 웨딩박람회</strong></div>
             <a href="#apply" class="btn-float">무료 참가 신청</a>
         </div>
     </div>
 
     <footer><p>© 2026 BUSAN 프리미엄 웨딩박람회. ALL RIGHTS RESERVED.</p></footer>
 
+    <script src="partners.js"></script>
+    <script src="roulette.js"></script>
+
     <script>
-        // [위치] <script> 태그 바로 안쪽 상단
-function autoHyphen(target) {
-    target.value = target.value
-        .replace(/[^0-9]/g, '')
-        .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3").replace(/(\-{1,2})$/g, "");
-}
-        const expoData = {
-    // [수정] 대한민국 표준시(KST) 기준으로 정확히 30일 뒤의 자정(00:00:00)을 계산
-    getKstTargetDate: function() {
-        const now = new Date();
-        // 1. 현재 시간을 UTC로 변환 후 KST(UTC+9)로 계산
-        const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-        const kstNow = new Date(utc + (9 * 60 * 60 * 1000));
-        
-        // 2. 30일 뒤의 날짜 설정
-        const targetDate = new Date(kstNow);
-        targetDate.setDate(kstNow.getDate() + 30);
-        
-        // 3. 30일 뒤의 '자정(00:00:00)'으로 시간 고정
-        targetDate.setHours(0, 0, 0, 0);
-        
-        return targetDate.getTime();
-    },
-    
-    // 업체 데이터 (기존 데이터 유지)
-    partners: [
-    { 
-        name: "아뜰리에 로리에 (부산점)", 
-        category: "DRESS", 
-        img: "https://images.unsplash.com/photo-1594462254593-37609204859a?q=80&w=600", 
-        desc: "실크 드레스의 정수, 2026 신상 드레스 라인업 부산 단독 공개", 
-        tags: ["#실크전문제", "#부산단독전"] 
-    },
-    { 
-        name: "그랜드 모먼트", 
-        category: "WEDDING HALL", 
-        img: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=600", 
-        desc: "황령산 뷰 단독홀, 박람회 기간 내 예약 시 대관료 특별 할인", 
-        tags: ["#단독홀", "#황령산뷰"] 
-    },
-    { 
-        name: "D102 (부산본점)", 
-        category: "JEWELRY", 
-        img: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=600", 
-        desc: "1:1 맞춤 디자인 다이아몬드 예물 상담 및 박람회 단독 특전", 
-        tags: ["#다이아몬드", "#맞춤예물"] 
-    },
-    { 
-        name: "한빔한복", 
-        category: "HANBOK", 
-        img: "https://images.unsplash.com/photo-1597434310137-02055694c489?q=80&w=600", 
-        desc: "2026 신상 혼주 한복 및 신랑신부 한복 맞춤·대여 특별 혜택", 
-        tags: ["#혼주한복", "#맞춤대여"] 
-    }
-]
-};
-
-// 목표 시간 설정 (최초 1회 계산)
-const targetTime = expoData.getKstTargetDate();
-
-function updateTimer() {
-    const display = document.querySelector('#timer');
-    const now = new Date();
-    // 현재 접속한 기기의 시간을 UTC -> KST로 변환하여 비교
-    const utcNow = now.getTime() + (now.getTimezoneOffset() * 60000);
-    const kstNow = new Date(utcNow + (9 * 60 * 60 * 1000)).getTime();
-    
-    const distance = targetTime - kstNow;
-
-    if (distance < 0) {
-        display.textContent = "접수 종료";
-        return;
-    }
-
-    const d = Math.floor(distance / (1000 * 60 * 60 * 24));
-    const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    const s = Math.floor((distance % (1000 * 60)) / 1000);
-
-    display.textContent = `${d}일 ${h < 10 ? '0' + h : h}:${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}`;
-}
-
-        function renderPartners() {
-            const pList = document.getElementById('partner-list');
-            let html = expoData.partners.map(p => `
-                <div class="partner-item">
-                    <div class="partner-img-box"><img src="${p.img}"></div>
-                    <div class="partner-info">
-                        <span class="cate">${p.category}</span>
-                        <p class="name">${p.name}</p>
-                        <p class="desc">${p.desc}</p>
-                        <div class="tag-box">${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
-                    </div>
-                </div>
-            `).join('');
-            html += `<div class="partner-item coming-soon"><p style="color:#aaa;font-weight:700;">Coming Soon</p></div>`;
-            pList.innerHTML = html;
+        // 휴대폰 자동 하이픈
+        function autoHyphen(target) {
+            target.value = target.value.replace(/[^0-9]/g, '')
+                         .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3")
+                         .replace(/(\-{1,2})$/g, "");
         }
 
+        // 타이머 업데이트 (partners.js의 데이터를 사용)
+        function updateTimer() {
+            const display = document.querySelector('#timer');
+            if(!display || typeof expoData === 'undefined') return;
+
+            const targetTime = expoData.getKstTargetDate();
+            const now = new Date();
+            const utcNow = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const kstNow = new Date(utcNow + (9 * 60 * 60 * 1000)).getTime();
+            const distance = targetTime - kstNow;
+
+            if (distance < 0) { display.textContent = "접수 종료"; return; }
+
+            const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((distance % (1000 * 60)) / 1000);
+
+            display.textContent = `${d}일 ${h < 10 ? '0' + h : h}:${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}`;
+        }
+
+        // 파트너 렌더링 (디자인이 적용된 partners.css와 호환되게 통합)
+        // index.html 하단 renderPartners 함수 부분
+function renderPartners() {
+    const pList = document.getElementById('partner-list');
+    if(!pList || typeof expoData === 'undefined') return;
+
+    pList.innerHTML = expoData.partners.map(p => {
+        // 태그가 있으면 <span>으로 감싸고 없으면 빈 칸
+        const tagHtml = (p.tags) ? p.tags.map(tag => `<span>${tag}</span>`).join('') : '';
+
+        return `
+            <div class="partner-card">
+                <div class="partner-img"><img src="${p.img}"></div>
+                <div class="partner-info">
+                    <span class="category">${p.category}</span>
+                    <h3>${p.name}</h3>
+                    <p class="desc">${p.desc}</p>
+                    <div class="tags">${tagHtml}</div> </div>
+            </div>
+        `;
+    }).join('') + '<div class="partner-card coming-soon"><span>Coming Soon</span></div>';
+}
+
+        // 폼 제출 로직
+        function initForm() {
+            const applyForm = document.getElementById('applyForm');
+            if(!applyForm) return;
+
+            applyForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const submitBtn = this.querySelector('.btn-submit');
+                submitBtn.innerText = "전송 중...";
+                submitBtn.disabled = true;
+
+                const GAS_URL = "https://script.google.com/macros/s/AKfycbz2khnzXb_AEKdnQm6OBsUEHistGny6FnFaTlRiAaUp62iR5yPbIqjzg8ze-_UIVZGV/exec"; 
+                const formData = {
+                    name: document.getElementById('user-name').value,
+                    phone: document.getElementById('user-phone').value,
+                    date: document.getElementById('user-date').value,
+                    prize: document.getElementById('wonPrizeField').value || "미참여"
+                };
+
+                fetch(GAS_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(formData) })
+                .then(() => {
+                    alert('신청이 완료되었습니다!');
+                    location.reload(); 
+                }).catch(() => {
+                    alert('오류 발생');
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "무료 입장권 신청 완료";
+                });
+            });
+        }
+
+        // 모든 로드 완료 후 실행
         window.onload = () => {
-            updateTimer();
-            setInterval(updateTimer, 1000);
-            renderPartners();
-            // index.html의 폼 제출 부분 수정
-// index.html 하단 스크립트 수정본
-document.getElementById('applyForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    // 버튼 상태 변경 (중복 클릭 방지)
-    const submitBtn = this.querySelector('.btn-submit');
-    const originalText = submitBtn.innerText;
-    submitBtn.innerText = "전송 중...";
-    submitBtn.disabled = true;
-
-    // [수정 포인트] 선택자를 더 확실하게 변경 (name 속성이 없어도 순서대로 가져옴)
-    try {
-        const formData = {
-            name: this.querySelector('input[type="text"]').value,
-            phone: this.querySelector('input[type="tel"]').value,
-            date: this.querySelector('select').value
-        };
-
-        // 1단계에서 복사한 구글 웹 앱 URL을 여기에 정확히 붙여넣으세요
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbz2khnzXb_AEKdnQm6OBsUEHistGny6FnFaTlRiAaUp62iR5yPbIqjzg8ze-_UIVZGV/exec"; 
-
-        // 데이터 전송
-        fetch(GAS_URL, {
-            method: 'POST',
-            mode: 'no-cors', // CORS 정책 우회 (구글 시트 연동 필수 설정)
-            cache: 'no-cache',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData)
-        })
-        .then(() => {
-            // mode: 'no-cors' 사용 시 응답을 읽을 수 없으므로 성공으로 간주
-            alert('2026 부산 프리미엄 웨딩박람회 신청이 완료되었습니다!');
-            location.reload(); 
-        })
-        .catch(err => {
-            console.error("전송 에러:", err);
-            alert('전송 중 오류가 발생했습니다. 다시 시도해주세요.');
-            submitBtn.disabled = false;
-            submitBtn.innerText = originalText;
-        });
-
-    } catch (error) {
-        console.error("입력값 로드 에러:", error);
-        alert("입력 항목을 확인해주세요.");
-        submitBtn.disabled = false;
-        submitBtn.innerText = originalText;
-    }
-});
+            if (typeof expoData !== 'undefined') {
+                updateTimer();
+                setInterval(updateTimer, 1000);
+                renderPartners();
+                initForm();
+                console.log("전체 로직 정상 가동");
+            } else {
+                console.error("partners.js 로드 실패");
+            }
         };
     </script>
+
+<script>
+    // 문서가 완전히 읽힌 뒤(DOM 가동 후) 실행되도록 감싸줍니다.
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        // [검증] 데이터가 잘 넘어왔는지 확인 (에러 방지용)
+        if (typeof expoData !== 'undefined') {
+            console.log("데이터 로드 성공:", expoData);
+            
+            // 여기서 파트너 리스트를 그리는 함수 등을 실행합니다.
+            renderPartnerList(); 
+        } else {
+            console.error("에러: partners.js 파일을 찾지 못했거나 내용이 비어있습니다.");
+        }
+    });
+
+    function renderPartnerList() {
+        const listContainer = document.getElementById('partner-list');
+        if(!listContainer) return;
+
+        // expoData.partners 데이터를 기반으로 화면 구성
+        const html = expoData.partners.map(item => `
+            <div class="partner-card">
+                <div class="partner-img"><img src="${item.img}"></div>
+                <div class="partner-info">
+                    <span class="category">${item.category}</span>
+                    <h3>${item.name}</h3>
+                    <p>${item.desc}</p>
+                </div>
+            </div>
+        `).join('');
+        
+        listContainer.innerHTML = html;
+    }
+</script>
+</script>
 </body>
 </html>

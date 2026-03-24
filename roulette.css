@@ -1,0 +1,70 @@
+/* 1. 전체 화면을 덮는 어두운 배경 (팝업의 부모) */
+#roulette-overlay {
+    position: fixed; /* 화면에 박제 */
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.7); /* 90% 불투명 검정 */
+    z-index: 999999; /* 무조건 최상단 */
+    display: flex; /* 자식들을 중앙으로 모음 */
+    align-items: center; 
+    justify-content: center;
+    overflow: hidden; /* 스크롤 방지 */
+}
+
+/* 2. 이미지가 담길 모달 박스 */
+.roulette-modal {
+    position: relative;
+    width: 100%;
+    max-width: 500px; /* PC용 최대 크기 */
+    text-align: center;
+    padding: 20px;
+    display: block !important; /* 사라짐 방지 */
+}
+
+/* 3. 타이틀 이미지 조절 */
+.roulette-title-box {
+    width: 100%;
+    max-width: 450px; /* [조절] 타이틀 크기 */
+    margin: 0 auto 40px auto;
+}
+.roulette-title-box img {
+    width: 100%;
+    height: auto;
+}
+
+/* 4. 룰렛 본체 (포인터 + 원판) */
+.canvas-container {
+    position: relative;
+    width: 380px; /* [조절] 원판 크기 */
+    height: 380px;
+    margin: 0 auto;
+    cursor: pointer;
+}
+
+/* 5. 포인터(화살표) 위치 및 크기 조절 */
+.roulette-pointer {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    pointer-events: none; /* 원판 클릭 방해 금지 */
+
+    /* [조절] 위아래 위치: 숫자가 클수록 위로 올라감 */
+    top: -55px; 
+
+    /* [조절] 화살표 크기 */
+    width: 60px; 
+    
+    height: auto;
+    clip-path: none !important;
+    background: none !important;
+}
+
+/* 6. 원판 이미지 */
+#roulette-img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    transition: transform 4s cubic-bezier(0.1, 0, 0.2, 1);
+    filter: drop-shadow(0 15px 30px rgba(0,0,0,0.5));
+}
